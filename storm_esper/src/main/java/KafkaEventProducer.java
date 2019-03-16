@@ -3,11 +3,11 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.htrace.fasterxml.jackson.databind.JsonNode;
-import org.apache.htrace.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-
+import org.apache.kafka.connect.json.JsonSerializer;
 import java.io.*;
 import java.util.Iterator;
 import java.util.Map;
@@ -34,8 +34,10 @@ public class KafkaEventProducer {
         props.put("value.serializer", "org.apache.kafka.connect.json.JsonSerializer");
         // We want acks from Kafka that messages are properly received.
         props.put("request.required.acks", "1");
+        //props.put("enable.idempotence", "True");
 
         // Create the producer instance
+        Thread.currentThread().setContextClassLoader(null);
         producer = new KafkaProducer(props);
     }
 
@@ -122,29 +124,7 @@ public class KafkaEventProducer {
 
             }
 
-    /**
-     * Send csv file data to the named topic on Kafka broker
-     *
-     * @param topic
-     * @throws IOException
-     */
-    public void sendOutputToKafka(Object outputCEP, String topic) throws IOException {
-        try{
 
-            System.out.println("output \t" +  outputCEP + "\n");
-            // Create the message to be sent
-            ObjectMapper mapper = new ObjectMapper();
-
-            JsonNode jsonNode = mapper.valueToTree(outputCEP);
-            // Send the message
-            //System.out.println(jsonNode);
-            ProducerRecord<String, JsonNode> data = new ProducerRecord<String, JsonNode>(topic,jsonNode);
-            producer.send(data);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
 
 

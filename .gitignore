@@ -1,0 +1,9 @@
+# Intellij Junk
+.idea/
+*.iml
+*.iws
+*.yaml
+
+# Maven Junk
+log/
+target/

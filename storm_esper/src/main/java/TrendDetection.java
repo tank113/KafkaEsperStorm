@@ -9,18 +9,26 @@ import java.util.Map;
 
 public class TrendDetection {
 
-    public static Map detect_trend(Map firstEvent, Map prevEvent, Map lastEvent) {
-
+    public static Map detect_trend(Object[] lastEvent) {
 
         Map<String, Object> resultInc = new HashMap<String, Object>();
         Map<String, Object> resultDec = new HashMap<String, Object>();
         Map<String, Object> resultTurn = new HashMap<String, Object>();
         Map<String, Object> trend = new HashMap<String, Object>();
 
-        // Convert Object to Map
-        Map first = objectToMap(firstEvent);
-        Map second = objectToMap(prevEvent);
-        Map third = objectToMap(lastEvent);
+
+        Map<String, Object> first;
+        Map<String, Object> second;
+        Map<String, Object> third;
+        System.out.println("result" + lastEvent[0]);
+        //System.out.println("result1" + lastEvent[1]);
+        //System.out.println("result2" + lastEvent[2]);
+
+
+
+        first = objectToMap(lastEvent[0].toString());
+        second = objectToMap(lastEvent[1].toString());
+        third = objectToMap(lastEvent[2].toString());
 
 
         for (Object k : first.keySet()){
@@ -47,19 +55,17 @@ public class TrendDetection {
         return trend;
     }
 
-    public static Map objectToMap(Map<String, Object> result_output) {
-        Map<String, Object> output = new HashMap<String, Object>();
-        try{
-            Map.Entry<String, Object> entry = result_output.entrySet().iterator().next();
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode node = mapper.convertValue(entry.getValue(), JsonNode.class);
-            output = mapper.readValue(node.toString(),
-                    new TypeReference<HashMap<String, Object>>() {
-                    });
-        }catch (IOException e){
+    private static Map<String, Object> objectToMap(String object) {
+        Map<String, Object> output=new HashMap<>();
 
+        String[] pairs = object.split(",");
+        for (String pair : pairs) {
+            String[] keyValue = pair.split(":");
+            //System.out.println("keyvalue" + keyValue[0].trim());
+            Object value = keyValue[1].trim().replace("}", "");
+            //System.out.println("value" + value);
+            output.put(keyValue[0].trim().replace("{", ""), value);
         }
-
         return output;
 
 

@@ -8,8 +8,7 @@ public class ListenerEvent implements UpdateListener {
     final static Logger logger = LoggerFactory.getLogger(UpdateListener.class);
 
     public void update(EventBean[] newEvents, EventBean[] oldEvents) {
-        EventBean event = newEvents[0];
-        Object average = event.get("hum");
+        Object event = newEvents[0].getUnderlying();
         System.out.println("uponval of the average stood at"+ event);
     }
 }
